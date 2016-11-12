@@ -16,6 +16,26 @@ public class POI {
     String imageURL;
     String audio;
 
+    public String getHours() {
+        return hours;
+    }
+
+    public void setHours(String hours) {
+        this.hours = hours;
+    }
+
+    String hours;
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
+    String cost;
+
     public POI () {}
 
     public POI (JSONObject json) {

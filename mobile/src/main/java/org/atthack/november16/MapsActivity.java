@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ import com.nuance.speechkit.Transaction;
 import com.nuance.speechkit.TransactionException;
 
 import org.atthack.november16.data.POI;
+import org.atthack.november16.fragment.DetailFragment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,14 +53,14 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnCameraMoveListener, AudioPlayer.Listener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements DetailFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleMap.OnCameraMoveListener, AudioPlayer.Listener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     boolean mapDataLoaded = false;
     boolean mapReady = false;
     String mapData = null;
     Marker center;
-    JSONObject currentPOI = null;
+    POI currentPOI = null;
 
     private Session speechSession;
     private Transaction ttsTransaction;
@@ -110,7 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void initTTS() {
         //Create a session
-        speechSession = Session.Factory.session(this, Configuration.SERVER_URI, Configuration.APP_KEY);
+        speechSession = Session.Factory.session(this, Configuration.SERVER_URI_TTS, Configuration.APP_KEY_TTS);
         speechSession.getAudioPlayer().setListener(this);
     }
 
@@ -128,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             //JSONObject point = pois.getJSONObject(i);
                             POI point = new POI(pois.getJSONObject(i));
                             LatLng pointPos = new LatLng(point.getLat(), point.getLng());
-                            Marker m = mMap.addMarker(new MarkerOptions().position(pointPos).title(point.getName()));
+                            Marker m = mMap.addMarker(new MarkerOptions().position(pointPos));//.title(point.getName()));
                             markerPOIMap.put(m, point);
                         }
                     } catch (JSONException e) {}
@@ -161,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         this.mapReady = true;
 
-        mMap.setInfoWindowAdapter(new POIInfoWindowAdapter());
+        //mMap.setInfoWindowAdapter(new POIInfoWindowAdapter());
         populateMap();
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
@@ -182,8 +184,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean onMarkerClick(final Marker marker) {
 
         String markerText = marker.getTitle();
-        currentPOI = Util.getPOIFromMarker(MapsActivity.this.mapData, marker);
+        currentPOI = markerPOIMap.get(marker);//Util.getPOIFromMarker(MapsActivity.this.mapData, marker);
+
+        FragmentManager fm = getSupportFragmentManager();
+        DetailFragment dialog = new DetailFragment();
+        dialog.setData(currentPOI);
+        dialog.show(fm, "detail");
+
+
         //speak(markerText);
+
+
+
 
         //recognize();
 //        mLastSelectedMarker = marker;
@@ -232,19 +244,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void interpretSpeech(JSONObject intent) {
-        String key = null;
+
+        String speakText = null;
         if (intent.toString().contains("COST")) {
             // how much does it cost
+            speakText = currentPOI.getCost();
 
         } else if (intent.toString().contains("HOURS")) {
             // what are the hours
-
+            speakText = currentPOI.getHours();
 
         }
 
-        if (key != null) {
+        if (speakText != null) {
             try {
-                String speakText = this.currentPOI.get(key).toString();
                 speak(speakText);
 
             } catch (Exception e) {}
@@ -393,6 +406,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //                toggleReco.setText(getResources().getString(R.string.processing));
 //                break;
 //        }
+    }
+
+    @Override
+    public void onPlay() {
+        speak(this.currentPOI.getAudio());
+    }
+
+    @Override
+    public void onSpeech() {
+        recognize();
     }
 
     private enum State {
