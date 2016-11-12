@@ -17,20 +17,80 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
+    boolean mapDataLoaded = false;
+    boolean mapReady = true;
+    String mapData = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        String city = "Atlanta";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        OkHttpClient client = new OkHttpClient();
+        final String cityJSON = "https://s3.amazonaws.com/atthack1116/" + city.toLowerCase() + ".json";
+        Request request = new Request.Builder()
+                .url(cityJSON)
+                .get()
+                .build();
+
+        try {
+            client.newCall(request).enqueue(new Callback() {
+                @Override public void onFailure(Call call, IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    MapsActivity.this.mapDataLoaded = true;
+                    MapsActivity.this.mapData = response.body().string();
+                    populateMap();
+                }
+            });
+        }
+        catch (Exception e) {
+
+        }
     }
 
+    public void populateMap() {
+        if ((this.mapDataLoaded) && (this.mapReady)) {
+
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        JSONObject obj = new JSONObject(MapsActivity.this.mapData);
+                        JSONArray pois = obj.getJSONArray("poi");
+                        for (int i = 0; i < pois.length(); ++i) {
+                            JSONObject point = pois.getJSONObject(i);
+                            LatLng pointPos = new LatLng(point.getDouble("lat"), point.getDouble("lng"));
+                            mMap.addMarker(new MarkerOptions().position(pointPos).title(point.getString("name")));
+                        }
+                    } catch (JSONException e) {}
+                    LatLng atlanta = new LatLng(33.751032, -84.396284);
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLng(atlanta));
+                    mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f ) );
+                }
+            });
+
+
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -44,37 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        this.mapReady = true;
+        populateMap();
 
-        // Add a marker in Sydney and move the camera
-
-        try {
-            JSONObject obj = new JSONObject(loadJSONFromAsset());
-            JSONArray pois = obj.getJSONArray("poi");
-            for (int i = 0; i < pois.length(); ++i) {
-                JSONObject point = pois.getJSONObject(i);
-                LatLng pointPos = new LatLng(point.getDouble("lat"), point.getDouble("lng"));
-                mMap.addMarker(new MarkerOptions().position(pointPos).title(point.getString("name")));
-            }
-        } catch (JSONException e) {}
-        LatLng atlanta = new LatLng(33.751032, -84.396284);
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(atlanta));
-        mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f ) );
     }
-    public String loadJSONFromAsset() {
-        String json = null;
-        try {
-            InputStream is = getAssets().open("atthack1116.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-
-
 }
