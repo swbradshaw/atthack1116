@@ -30,7 +30,7 @@ public class Util {
 
             for (int i = 0; i < poiArray.length(); i++) {
                 JSONObject point = poiArray.getJSONObject(i);
-                if (point.get("name") == marker.getTitle()) {
+                if (point.get("name").equals(marker.getTitle())) {
                     return point;
                 }
             }

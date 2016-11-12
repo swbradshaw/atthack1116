@@ -201,30 +201,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ttsTransaction = speechSession.speakString(ttsText, options, new Transaction.Listener() {
             @Override
             public void onAudio(Transaction transaction, Audio audio) {
-//                logs.append("\nonAudio");
-
-                //The TTS audio has returned from the server, and has begun auto-playing.
                 ttsTransaction = null;
-  //              toggleTTS.setText(getResources().getString(R.string.speak_string));
             }
 
             @Override
             public void onSuccess(Transaction transaction, String s) {
-                //logs.append("\nonSuccess");
-
-                //Notification of a successful transaction. Nothing to do here.
             }
 
             @Override
             public void onError(Transaction transaction, String s, TransactionException e) {
                 //logs.append("\nonError: " + e.getMessage() + ". " + s);
-
-                //Something went wrong. Check Configuration.java to ensure that your settings are correct.
-                //The user could also be offline, so be sure to handle this case appropriately.
-
                 ttsTransaction = null;
             }
         });
+    }
+
+    private void interpretSpeech(JSONObject intent) {
+        String key = null;
+        if (intent.toString().contains("COST")) {
+            // how much does it cost
+
+        } else if (intent.toString().contains("HOURS")) {
+            // what are the hours
+
+
+        }
+
+        if (key != null) {
+            try {
+                String speakText = this.currentPOI.get(key).toString();
+                speak(speakText);
+
+            } catch (Exception e) {}
+        }
     }
     @Override
     public void onBeginPlaying(AudioPlayer audioPlayer, Audio audio) {
@@ -315,7 +324,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onRecognition(Transaction transaction, Recognition recognition) {
             //logs.append("\nonRecognition: " + recognition.getText());
-            Toast.makeText(MapsActivity.this, recognition.getText(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MapsActivity.this, recognition.getText(), Toast.LENGTH_SHORT).show();
             //We have received a transcription of the users voice from the server.
         }
 
@@ -326,7 +335,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Toast.makeText(MapsActivity.this, "onInterpretation", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MapsActivity.this, "onInterpretation", Toast.LENGTH_SHORT).show();
+
+            interpretSpeech(interpretation.getResult());
             // We have received a service response. In this case it is our NLU result.
             // Note: this will only happen if you are doing NLU (or using a service)
         }
