@@ -1,0 +1,125 @@
+{
+  "name": "Atlanta",
+  "poi": [
+    {
+      "name": "World of Coca-Cola",
+      "lat": 33.762781,
+      "lng":  -84.392775,
+      "description": "The World of Coca-Cola is a museum showcasing the history of The Coca-Cola Company that contains a host of entertainment areas and attractions",
+      "imageURL": "https://lh6.googleusercontent.com/proxy/WekNV4JIa1UYL6aHmcY-PMCptY49Upoh1T5ADc39vBSPeC0ZxnRvlspaaf7SnqKGtkNWHoafpL4EPEVg5SVLnzAT-Ouzz9toNaQU7MgxmsG1ETh3WE9kRFMYv4Z2ztBmf0Hr6AV72-Y7lAn7TFrvZrFx6F0NZ4E=w455-h256",
+      "audioURL": ""
+    },
+    {
+      "name": "Georgia Aquarium",
+      "lat": 33.763431,
+      "lng":   -84.394980,
+      "description": "One of world's largest aquariums, with permanent exhibits, interactive galleries & animals galore.",
+      "imageURL": "https://lh6.googleusercontent.com/-sWQ_DTC0WYw/Vov0Ue4DZhI/AAAAAAAAABA/AOtLc1sV2esXa2fntI1QVVsLe5TeA8YDgCJkC/s408-k-no/",
+      "audioURL": ""
+    },
+    {
+      "name": "College Football Hall of Fame",
+      "lat": 33.760193,
+      "lng":  -84.395506,
+      "description": "Sleek modern museum offers exhibits on famous college football players & an indoor field for events.",
+      "imageURL": "https://lh4.googleusercontent.com/proxy/aXnvHMJLB_mNGmqz-FG1OHDmh7v_0yeWMsqIo9-fT40_k-StHyq1Zr94sgRJXK1pull7DVi0ne4tg-HcT9HHoqsvKhTlRG1oPLxeYh1SPMg5oxwjzHyNtE4XTbVL0DlV78s3C41Ma0oNAvduqJkzf85t6x-Abg=w408-h467",
+      "audioURL": ""
+    },
+    {
+      "name": "Bobby Dodd Stadium",
+      "lat": 33.772595,
+      "lng":  -84.392920,
+      "description": "Home to the Georgia Tech Yellow Jackets, this arena is one of the oldest sites for college football.",
+      "imageURL": "https://lh4.googleusercontent.com/-qr_LIXpMFKE/WAJEOrro3RI/AAAAAAAADa0/HBDFxi8bOAkLkPH78sotheeLTrt4cS6rQCLIB/s455-k-no/",
+      "audioURL": ""
+    },
+    {
+      "name": "Center for Civil and Human Rights",
+      "lat": 33.772595,
+      "lng":   -84.392920,
+      "description": "Cultural attraction presents artifacts, art & photos from the Civil Rights Era & about human rights.",
+      "imageURL": "https://lh3.googleusercontent.com/-2vVvQeglQgQ/VuGRsSYJdHI/AAAAAAAAACA/Y7QeUJ5WCukYk4ChlXHuSnuEf_59MeRJwCJkC/s408-k-no/",
+      "audioURL": ""
+    },
+    {
+      "name": "CNN Center",
+      "lat": 33.759042,
+      "lng":  -84.395020,
+      "description": "The CNN Center is the world headquarters of CNN. The main newsrooms and studios for several of CNN's news channels are located in the building.",
+      "imageURL": "https://lh3.googleusercontent.com/-vrwcEatiOX0/Vv07WZcyI9I/AAAAAAAAAGE/nEeF69j1piQDY-Kbzv1RN6rO97nr0ECXgCJkC/s408-k-no/",
+      "audioURL": ""
+    },
+    {
+      "name": "Philips Arena",
+      "lat": 33.757313,
+      "lng":   -84.396345,
+      "description": "Philips Arena is a multi-purpose indoor arena located in Atlanta, Georgia that is home to the Atlanta Hawks, of the National Basketball Association, and the Atlanta Dream, of the Women's National Basketball Association.",
+      "imageURL": "https://lh4.googleusercontent.com/proxy/XdHXr-MMqMHBtw4v8LGlgnWJWMhA3kbDlZKXXkkQYtylqGaE0Gf3Yjd-caxvRzMvh-7wZ8nNgp8Ou4h46Ri4UVwFRJf3UXg8VopsspiriLCUEfJV9L0hQBR1wVv07UzwC1kSTfaWXXUHdjc5rGQyczqcrU2Wng=w408-h305",
+      "audioURL": ""
+    },
+    {
+      "name": "SkyView Atlanta",
+      "lat": 33.758924,
+      "lng":   -84.391914,
+      "description": "Towering nearly 20 stories above Centennial Park, the SkyView Ferris wheel features 42 climate-controlled gondolas providing guests with breathtaking panoramic views of downtown Atlanta and the surrounding metropolitan area.",
+      "imageURL": "https://lh5.googleusercontent.com/proxy/6DKakS_TjfkdWHcCJ6lHusCMm9-tlsHsSI4dnbwvMCysY4RlF80NwG-HSrMnQ1t41dFVdiThgW-1YHl15_EBtf7hzomoub8WwYldkOm_jh76T29Ov_v_AAmEdBBliTr1lFinbpP6S9mSpQGM4fVWvFZUw3y1qy8=w408-h546",
+      "audioURL": ""
+    },
+    {
+      "name": "Martin Luther King Jr. National Historic Site",
+      "lat": 33.756389,
+      "lng":   -84.372912,
+      "description": "National Park encompassing King's birth home, Ebenezer Baptist Church & his final resting place.",
+      "imageURL": "https://lh6.googleusercontent.com/proxy/8kED0JriwO6xwa6m-_oUfhcNOXXHWVw4f_5jIo5cPcjNDzPcWb_MGxfXEuYz0MkQ7r1yPi0hjQ4cELcxluLl976xEJDOiHCWjanf6rX1VozsOF-7pqid7vO5LPOQS_QEyWR3Ak_opo14vcKkla0CkKJ9Fd0zZQ=w408-h605",
+      "audioURL": ""
+    },
+    {
+      "name": "Krog Street Tunnel",
+      "lat": 33.756389,
+      "lng":   -84.372912,
+      "description": "Most urban tunnels and viaducts have their fair share of graffiti, but Atlanta’s Krog Street Tunnel no longer has an inch of unpainted space.",
+      "imageURL": "https://lh6.googleusercontent.com/proxy/ncwhf0saNEQ_P6moh-xcLnzN0wGdhBHbJEz_mzg7mhzbNkyY-rHnagHfCC72ntgK2oq0Xd795oPZh3m6fxRLH8fHJcv6YlHSBQqSxWNXaII_RlQJOAxEsDV352hVDbhYITd7ZkX6gwB0Br4uVgOyNTFNZNwoxA=w408-h268",
+      "audio": "The short underpass connects the Atlanta neighborhoods of Cabbagetown and Inman Park, attracting residents from both sides who are looking for a place to make their mark with street art. From small tags to huge murals to underground festival flyers, the concrete walls and pillars of are a chaotic kaleidoscope of overlapping and ever-shifting images, words, and ideas. People have even spray-painted marriage proposals on the walls. The graffiti is so well known and so often updated that there are even websites that post an image a day from the Krog street underground."
+    },
+    {
+      "name": "Woodruff Park",
+      "lat": 33.755055,
+      "lng":   -84.388668,
+      "description": "City park with 2 fountains, playgrounds, sculptures, chess court & pavilion, plus events.",
+      "imageURL": "https://lh3.googleusercontent.com/proxy/ov0IAjmNBAdBayi_CE8hP48WVVIuv9LLnpDo-DZpCu5-9Qb2QFxOiEtFDK5ZDZSjJdDpd1Ap8T-WJYLzeB8cnMnZpCRxaA7zU5tfm3o9lnG0efI-jpDo-NbFmg1Lk3R0LT6DG0tCw-Zm4piYbPJ9gpkCW8D2Eg=w408-h264",
+      "audio": "Today Woodruff Park sits in the heart of downtown, just north of Five Points. But for the first century of the city, the land now filled with trees was crisscrossed by streets and filled with buildings. Philanthropist Robert Woodruff donated the land to the city in 1971 on the condition of anonymity, resulting in the new space being opened as Central City Park. It was only following Woodruff's death that the park was renamed in his honor."
+    },
+     {
+      "name": "Centennial Olympic Park",
+      "lat": 33.759638,
+      "lng":   -84.392806,
+      "description": "Home of the 1996 Olympic games now filled with walking paths, water gardens & the Fountain of Rings.",
+      "imageURL": "https://lh4.googleusercontent.com/proxy/mj3kFtyGdPotoE-VUq5ZEb9omd1BhZFavukJ_-rfdUEzL12n8M6gi3KyXvxJ5y8gngSC4MlmeUQ8nWkuheg9UFxhoAiR9vadjKtI5SssgMVj0TLOzvUmMuI8iJWn8Dfmo6a21SvDAxsoHOVP0LcDbiSU4i-6lQ=w408-h305",
+      "audio": "Centennial Olympic Park is arguably one of Atlanta's most important civic and cultural spaces. Surrounded by an array of the city's biggest attractions, the park plays host to concerts, festivals, and countless tourists. A lasting legacy from the 1996 Olympics, the park is only two decades old, having been constructed on blocks formerly filled with blighted buildings to the west of downtown. But thanks to the park's success, plans are underway to expand and enhance the park, 20 years after it first welcomed the world to the Olympics."
+    },
+         {
+      "name": "Just Us",
+      "lat": 33.752770,
+      "lng":   -84.425153,
+      "description": "Just Us is the smallest of the official neighborhoods of Atlanta, consisting of only two streets. It began as the Fountain Drive-Morris Brown Drive Community Club in the late 1940s, and evolved into its present name today during the early 1950s.",
+      "imageURL": "https://geo0.ggpht.com/cbk?panoid=QaNMLTTW5xs-LO0VCtKs9A&output=thumbnail&cb_client=search.TACTILE.gps&thumb=2&w=408&h=256&yaw=322.5&pitch=0&thumbfov=100",
+      "audio": "Of the 242 neighborhoods and 16 neighborhood areas officially recognized by the City of Atlanta, the reigning champion of diminutiveness is a pint-sized collection of about 60 homes called Just Us, a nod to its exclusiveness and communal vibe. Due west of downtown, wedged between Martin Luther King Jr. Drive and the Beltine's Westside Trail, Just Us is so named because it consists of just two streets and a handful of people. Some records indicate the area may have been home to the first African-American subdivision in the city. Fun facts: Just Us counts two tiny triangular parks, called I and II. The latter is dedicated to President John F. Kennedy, with an eternal gas light flame near a plaque that honors Dr. Martin Luther King Jr. The other park pays homage to Just Us' first president, a humanitarian and educator named Margaret Davis Bowen."
+    },
+             {
+      "name": "Trader Vic's",
+      "lat": 33.761501,
+      "lng":   -84.383573,
+      "description": "Mai Tais and Navy Grog served up in one of the original tiki bars.",
+      "imageURL": "https://lh6.googleusercontent.com/-A-yI1z_gXpI/Vgrtw9DSQzI/AAAAAAAAABU/81n1_V6okhsD0VTlw3cKB0dBUAiZE-ClQCJkC/s408-k-no/",
+      "audio": "The story of Trader Vic’s is like that of any successful chain — Victor Bergeron, spotting the burgeoning popularity of all things tropical, opened a bar across the street from his parents’ grocery store in Oakland, 1934. Its popularity quickly grew too large for its surroundings, and spread into franchises across the West Coast.; Trader Vic’s served up “exotic delicacies,” most of which were actually just Americanized Chinese dishes with some pineapple thrown in. This conflation of cultures was the case in most tiki bars: African masks hung next to Japanese fishing buoys, and patrons listened to Hawaiian ukulele music while they drank Caribbean alcohol with Tahitian names. Tiki culture was native to nowhere, but evocative of an imaginary paradise. ;Part of what attracted folks to the tiki craze was the feeling of escapism. If you couldn’t get to the Pacific, no matter — a temporary vacation was available to you at Trader Vic’s. Vic capitalized on this by placing many of his franchises in hotels, which ultimately was the downfall of tiki. Its connection with cheap leisure marked it as tacky. ; Nevertheless, a few Trader Vic’s outposts hung on. The Atlanta Vic’s is located in a Hilton, and it has (thankfully) held on to the midcentury kitsch that makes it so unique. Today, tiki kitsch is yet again exportable — most of the Traders Vic’s in existence are not in the contiguous U.S., but in far flung destinations like Dubai and Amman."
+    },
+     {
+      "name": "Junkman's Daughter",
+      "lat": 33.766800,
+      "lng":   -84.349546,
+      "description": "Offbeat storefront with an eclectic interior selling unique clothing, costumes & unusual gifts.",
+      "imageURL": "https://lh5.googleusercontent.com/-TzOECfTG_KU/VQi1neDgr1I/AAAAAAAACNM/h2vb95qw2iEECyUopoPHe7pSU0Inl-V5gCJkC/s408-k-no/",
+      "audio": "The store was initially opened in 1982 by Pam Majors, a true daughter of a junkman, who needed retail space to sell the accumulated items from her parents business. Adding a mix of items based on her own personal taste, the store quickly gained a following among the college and alternative portion of the Atlanta metropolitan population.; In 1994 the store moved to its present location, a renovated grocery store, and now has over 10,000 square feet of merchandise. The distinctive mural adorning the front of the store was created by a local tattoo artist named Watson Atkinson who had his first tattoo parlor in a what is now a storage closet of the store. The original front was a UFO based theme and the new mural retained the crashed UFO embedded above the present entrance. Vibrant murals surround the building and reflect the unique character of the store. ; The community of Little 5 Points in which the store is located is a collection of restaurants, vintage shops, galleries and music venues but the Junkman’s Daughter is the heart of the area. The popularity of the store is evidenced by the growing list of famous personalities who have shopped there. These include Steven Tyler, Bono, Cyndi Lauper, ZZ Top, The Clash, Betsey Johnson, Lenny Kravitz, Pat Field, Pink, Alice Cooper, Outkast, Courtney Love, Usher, Tura Santana, Debbie Harry, Avril Lavigne, Nicky Sixx, Rick James, and Alanis Morrisette. ; Visitors to the store are often greeted by a cat or two that live in the store. The staff frequently adopts kittens to raise and find homes for as a part of their participation in the surrounding community. A word of caution, photography is prohibited inside the store."
+    }
+  ]
+}

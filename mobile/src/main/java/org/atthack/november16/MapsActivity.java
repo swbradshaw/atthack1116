@@ -10,6 +10,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -39,8 +46,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        try {
+            JSONObject obj = new JSONObject(loadJSONFromAsset());
+            JSONArray pois = obj.getJSONArray("poi");
+            for (int i = 0; i < pois.length(); ++i) {
+                JSONObject point = pois.getJSONObject(i);
+                LatLng pointPos = new LatLng(point.getDouble("lat"), point.getDouble("lng"));
+                mMap.addMarker(new MarkerOptions().position(pointPos).title(point.getString("name")));
+            }
+        } catch (JSONException e) {}
+        LatLng atlanta = new LatLng(33.751032, -84.396284);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(atlanta));
+        mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f ) );
     }
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("atthack1116.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
+
 }
