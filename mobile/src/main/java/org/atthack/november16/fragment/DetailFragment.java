@@ -46,6 +46,7 @@ public class DetailFragment extends BottomSheetDialogFragment{
         void onPlay();
         void onSpeech();
         void onDismiss();
+        void setBitmap(Bitmap b);
     }
 
     @Override
@@ -161,6 +162,7 @@ public class DetailFragment extends BottomSheetDialogFragment{
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -168,6 +170,7 @@ public class DetailFragment extends BottomSheetDialogFragment{
         }
 
         protected void onPostExecute(Bitmap result) {
+            DetailFragment.this.mListener.setBitmap(result);
             bmImage.setImageBitmap(result);
         }
     }

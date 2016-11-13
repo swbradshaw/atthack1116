@@ -1,11 +1,24 @@
 package org.atthack.november16;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Wearable;
 import com.google.android.gms.wearable.WearableListenerService;
+
+import org.atthack.november16.data.POI;
+
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
+
+import me.denley.courier.Packager;
+import me.denley.courier.ReceiveMessages;
 
 /**
  * Created by SWBRADSH on 11/12/2016.
@@ -18,6 +31,7 @@ public class OngoingNotificationListenerService extends WearableListenerService 
     private GoogleApiClient mGoogleApiClient;
 //
 
+
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
         Log.v(TAG, "Message received");
@@ -27,6 +41,7 @@ public class OngoingNotificationListenerService extends WearableListenerService 
         } else {
 
             String title = messageEvent.getPath().substring("/poi/".length());
+            //POI poi = Packager.unpack(this, messageEvent.getData(), POI.class);
             Log.v(TAG, "Starting POI: "+ title);
             // Build the intent to display our custom notification
             Intent notificationIntent = new Intent(this, POIActivity.class);
@@ -36,48 +51,27 @@ public class OngoingNotificationListenerService extends WearableListenerService 
 
         }
     }
-//
-//    @Override
-//    public void onDataChanged(DataEventBuffer dataEvents) {
-//        Log.i(TAG, "onDataChanged");
-//        final List<DataEvent> events = FreezableUtils.freezeIterable(dataEvents);
-//
-//        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addApi(Wearable.API)
-//                .build();
-//
-//        if (!mGoogleApiClient.isConnected()) {
-//            Log.i(TAG, "not connected");
-//            ConnectionResult connectionResult = mGoogleApiClient
-//                    .blockingConnect(30, TimeUnit.SECONDS);
-//            if (!connectionResult.isSuccess()) {
-//                Log.e(TAG, "Service failed to connect to GoogleApiClient.");
-//                return;
-//            }
-//        }
-//
-//
-//        for (DataEvent event : events) {
-//            if (event.getType() == DataEvent.TYPE_CHANGED) {
-//                String path = event.getDataItem().getUri().getPath();
-//                Log.i(TAG, path);
-//                if (Constants.PATH_NOTIFICATION.equals(path)) {
-//                    // Get the data out of the event
-//                    DataMapItem dataMapItem = DataMapItem.fromDataItem(event.getDataItem());
-//                    final String title = dataMapItem.getDataMap().getString(Constants.KEY_TITLE);
-//                    final String time = dataMapItem.getDataMap().getString(Constants.KEY_TIME);
-//
-//                    // Build the intent to display our custom notification
-//                    Intent notificationIntent = new Intent(this, AlarmActivity.class);
-//                    notificationIntent.putExtra(AlarmActivity.EXTRA_TITLE, title);
-//                    notificationIntent.putExtra(AlarmActivity.EXTRA_TIME, time);
-//                    notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(notificationIntent);
-//
-//                } else {
-//                    Log.d(TAG, "Unrecognized path: " + path);
-//                }
-//            }
-//        }
-//  }
+
+    public Bitmap loadBitmapFromAsset(Asset asset) {
+        if (asset == null) {
+            throw new IllegalArgumentException("Asset must be non-null");
+        }
+        ConnectionResult result =
+                mGoogleApiClient.blockingConnect(15000, TimeUnit.MILLISECONDS);
+        if (!result.isSuccess()) {
+            return null;
+        }
+        // convert asset into a file descriptor and block until it's ready
+        InputStream assetInputStream = Wearable.DataApi.getFdForAsset(
+                mGoogleApiClient, asset).await().getInputStream();
+        mGoogleApiClient.disconnect();
+
+        if (assetInputStream == null) {
+            Log.w(TAG, "Requested an unknown Asset.");
+            return null;
+        }
+        // decode the stream into a bitmap
+        return BitmapFactory.decodeStream(assetInputStream);
+    }
+
 }

@@ -2,12 +2,14 @@ package org.atthack.november16;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Toast;
@@ -61,6 +63,8 @@ import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements DetailFragment.OnFragmentInteractionListener, OnMapReadyCallback, GoogleMap.OnCameraMoveListener, AudioPlayer.Listener, GoogleMap.OnMarkerClickListener {
 
+    private static final String TAG = "ATTHACK " + MapsActivity.class.getSimpleName();
+
     private GoogleMap mMap;
     boolean mapDataLoaded = false;
     boolean mapReady = false;
@@ -74,6 +78,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private Audio startEarcon;
     private Audio stopEarcon;
     private Audio errorEarcon;
+    private Transaction speechTrans;
 
     public static final String KEY_TITLE = "title";
 
@@ -209,11 +214,21 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     @Override
     public void onDismiss() {
         //Fragment dialog had been dismissed
-        if (ttsTransaction != null) {
-            try {
-                ttsTransaction.cancel();
-            } catch (Exception e) {}
-        }
+
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    speechSession.getAudioPlayer().pause();
+                    speechSession.getAudioPlayer().stop();
+
+                } catch (Exception e) {
+
+                }
+
+            }
+        });
+
         Intent mServiceIntent = new Intent(this, SendToWearService.class);
         mServiceIntent.setData(Uri.parse("/dismiss"));
         this.startService(mServiceIntent);
@@ -232,7 +247,9 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             dialog.setData(currentPOI);
             dialog.show(fm, "detail");
 
+
             sendWear(currentPOI.getName());
+            Courier.deliverMessage(this, "/bitmap", currentPOI);
 
         }
         //speak(markerText);
@@ -248,7 +265,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         return false;
     }
 
-    private void recognize() {
+    private void recognize(String textInput) {
         //Setup our Reco transaction options.
         Transaction.Options options = new Transaction.Options();
         options.setDetection(DetectionType.Short);
@@ -256,7 +273,13 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         options.setEarcons(startEarcon, stopEarcon, errorEarcon, null);
 
         //Add properties to appServerData for use with custom service. Leave empty for use with NLU.
+
         JSONObject appServerData = new JSONObject();
+        try {
+            if (textInput != null) {
+                appServerData.put("message", textInput);
+            }
+        } catch (Exception e) {}
         //Start listening
         recoTransaction = speechSessionNLU.recognizeWithService("ATTHACK", appServerData, options, recoListener);
     }
@@ -271,11 +294,13 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         ttsTransaction = speechSession.speakString(ttsText, options, new Transaction.Listener() {
             @Override
             public void onAudio(Transaction transaction, Audio audio) {
+                Log.i(TAG, "onAudio");
                 ttsTransaction = null;
             }
 
             @Override
             public void onSuccess(Transaction transaction, String s) {
+                speechTrans = transaction;
             }
 
             @Override
@@ -452,6 +477,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     }
 
     @Override
+    public void setBitmap(Bitmap b) {
+        currentPOI.setBitmap(Util.createAssetFromBitmap(b));
+    }
+
+    @Override
     public void onPlay() {
         speak(this.currentPOI.getAudio());
     }
@@ -463,13 +493,13 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     @ReceiveMessages("/nlu")
     public void onWearNluText(String text, String nodeId) {
-        Toast.makeText(MapsActivity.this, text, Toast.LENGTH_SHORT).show();
+       recognize(text);
 
     }
 
     @Override
     public void onSpeech() {
-        recognize();
+        recognize(null);
     }
 
     private enum State {

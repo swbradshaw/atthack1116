@@ -5,6 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,13 +20,17 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.Wearable;
 import com.nuance.speechkit.DetectionType;
 import com.nuance.speechkit.Interpretation;
 import com.nuance.speechkit.Language;
@@ -34,9 +42,12 @@ import com.nuance.speechkit.TransactionException;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import me.denley.courier.Courier;
+import me.denley.courier.ReceiveMessages;
 
 /**
  * Created by SWBRADSH on 11/12/2016.
@@ -50,6 +61,7 @@ public class POIActivity extends Activity {
     TextView mTitle;
     Button btnAsk;
     Button btnPlay;
+    FrameLayout frame;
     Node mNode;
     private Session speechSession;
     private Session speechSessionNLU;
@@ -91,6 +103,7 @@ public class POIActivity extends Activity {
 
         sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
 
+        frame = (FrameLayout) findViewById(R.id.frame);
 
         mTitle = (TextView) findViewById(R.id.title);
         btnPlay = (Button) findViewById(R.id.btn_play);
@@ -108,7 +121,7 @@ public class POIActivity extends Activity {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage("/play");
+                sendMessage("/play","");
                 Log.i(TAG, "play");
 
             }
@@ -132,15 +145,24 @@ public class POIActivity extends Activity {
     }
 
 
-    private void sendMessage(String msg) {
+    private void sendMessage(String msg, String data) {
         //Intent mServiceIntent = new Intent(this, SendToPhoneService.class);
         //mServiceIntent.setData(Uri.parse(msg));
         //this.startService(mServiceIntent);
-        Courier.deliverMessage(this, msg, "");
+        Courier.deliverMessage(this, msg, data);
     }
 
 
+    @ReceiveMessages("/bitmap")
+    public void onReceiveBitmap(Asset asset, String nodeId) {
 
+        if (asset != null) {
+            Log.i(TAG, "Got bitmap");
+            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
+            Drawable drawable = new BitmapDrawable(getResources(), b);
+            frame.setBackground(drawable);
+        }
+    }
 
     private static final int SPEECH_REQUEST_CODE = 0;
 
@@ -163,7 +185,7 @@ public class POIActivity extends Activity {
                     RecognizerIntent.EXTRA_RESULTS);
             String spokenText = results.get(0);
             // Do something with spokenText
-            sendMessage("/nlu/"+spokenText);
+            sendMessage("/nlu",spokenText);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

@@ -1,10 +1,14 @@
 package org.atthack.november16;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.wearable.Asset;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Iterator;
 
 /**
@@ -18,6 +22,12 @@ public class Util {
             return getPOIFromMarker(new JSONObject(poi), marker);
         } catch (Exception e) {}
         return null;
+    }
+
+    public static Asset createAssetFromBitmap(Bitmap bitmap) {
+        final ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteStream);
+        return Asset.createFromBytes(byteStream.toByteArray());
     }
 
     public static JSONObject getPOIFromMarker(JSONObject poi, Marker marker) {
