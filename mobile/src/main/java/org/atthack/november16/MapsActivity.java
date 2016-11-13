@@ -46,6 +46,7 @@ import com.nuance.speechkit.Recognition;
 import com.nuance.speechkit.Session;
 import com.nuance.speechkit.Transaction;
 import com.nuance.speechkit.TransactionException;
+import com.nuance.speechkit.Voice;
 
 import org.atthack.november16.data.POI;
 import org.atthack.november16.fragment.DetailFragment;
@@ -122,8 +123,8 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         if (city == null) {
             city = "atlanta.json";
         }
-        if (intent.getStringExtra("language") != null) {
-            language = intent.getStringExtra("language");
+        if (intent.getStringExtra("lang") != null) {
+            language = intent.getStringExtra("lang");
         }
         OkHttpClient client = new OkHttpClient();
         final String cityJSON = "https://s3.amazonaws.com/atthack1116/" + city.toLowerCase();
@@ -173,6 +174,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    LatLng start;
                     try {
                         markerPOIMap = new HashMap<Marker, POI>();
                         JSONObject obj = new JSONObject(MapsActivity.this.mapData);
@@ -202,21 +204,20 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                                     .icon(BitmapDescriptorFactory.defaultMarker(iconColor)));//.title(point.getName()));
                             markerPOIMap.put(m, point);
                         }
+                        start = new LatLng(obj.getDouble("lat"), obj.getDouble("lng"));
+                        Location startLoc = new Location("");
+                        startLoc.setLatitude(start.latitude);
+                        startLoc.setLongitude(start.longitude);
+                        lastLocation = startLoc;
                     } catch (JSONException e) {
+                        start = new LatLng(33.751032, -84.396284);
                     }
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.map_center);
 
-                    LatLng atlanta = new LatLng(33.751032, -84.396284);
-                    Location atlLoc = new Location("");
-                    atlLoc.setLatitude(atlanta.latitude);
-                    atlLoc.setLongitude(atlanta.longitude);
-                    lastLocation = atlLoc;
-
-
-                    center = mMap.addMarker(new MarkerOptions().position(atlanta).icon(icon).anchor(0.5f, 0.5f));
+                    center = mMap.addMarker(new MarkerOptions().position(start).icon(icon).anchor(0.5f,0.5f));
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(atlanta));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f));
+                    mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(start, 15.0f ) );
                 }
             });
 
@@ -402,8 +403,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private void speak(String ttsText) {
         //Setup our TTS transaction options.
         Transaction.Options options = new Transaction.Options();
-        options.setLanguage(new Language("eng-USA"));
-        //options.setVoice(new Voice(Voice.SAMANTHA)); //optionally change the Voice of the speaker, but will use the default if omitted.
+        //options.setLanguage(new Language("eng-USA"));
+        options.setLanguage(new Language(this.language));
+        if (this.language == "eng-USA") {
+            options.setVoice(new Voice("Zoe")); //optionally change the Voice of the speaker, but will use the default if omitted.
+        }
 
         //Start a TTS transaction
         ttsTransaction = speechSession.speakString(ttsText, options, new Transaction.Listener() {
