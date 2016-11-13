@@ -84,6 +84,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private Audio stopEarcon;
     private Audio errorEarcon;
     private Transaction speechTrans;
+    private String language = "eng-USA";
 
     public static final String KEY_TITLE = "title";
     public static final float PIN_SHOW_DIST = 50; // Distance in meters that a pin will pop up automatically
@@ -94,7 +95,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        String city = "Atlanta";
+
         super.onCreate(savedInstanceState);
         Courier.startReceiving(this);
         setContentView(R.layout.activity_maps);
@@ -104,9 +105,16 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         mapFragment.getMapAsync(this);
 
         loadEarcons();
-
+        Intent intent = getIntent();
+        String city = intent.getStringExtra("city");
+        if (city == null) {
+             city = "atlanta.json";
+        }
+        if (intent.getStringExtra("language") != null) {
+            language = intent.getStringExtra("language");
+        }
         OkHttpClient client = new OkHttpClient();
-        final String cityJSON = "https://s3.amazonaws.com/atthack1116/" + city.toLowerCase() + ".json";
+        final String cityJSON = "https://s3.amazonaws.com/atthack1116/" + city.toLowerCase();
         Request request = new Request.Builder()
                 .url(cityJSON)
                 .get()
@@ -331,7 +339,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         //Setup our Reco transaction options.
         Transaction.Options options = new Transaction.Options();
         options.setDetection(DetectionType.Short);
-        options.setLanguage(new Language("eng-USA"));
+        options.setLanguage(new Language(this.language));
         options.setEarcons(startEarcon, stopEarcon, errorEarcon, null);
 
         //Add properties to appServerData for use with custom service. Leave empty for use with NLU.

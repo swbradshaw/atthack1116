@@ -6,4 +6,27 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_start">Mixpedition</string>
+
+    <string-array name="language">
+        <item>English</item>
+        <item>Spanish</item>
+    </string-array>
+
+    <string-array name="languageValue">
+        <item>eng-USA</item>
+        <item>eng-USA</item>
+    </string-array>
+
+
+
+    <string-array name="city">
+        <item>Atlanta</item>
+        <item>New York</item>
+    </string-array>
+
+    <string-array name="cityValue">
+        <item>atlanta.json</item>
+        <item>newyork-es.json</item>
+    </string-array>
 </resources>
