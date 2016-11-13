@@ -22,6 +22,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,6 +33,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.wearable.DataMap;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.Wearable;
 import com.nuance.speechkit.Audio;
 import com.nuance.speechkit.AudioPlayer;
 import com.nuance.speechkit.DetectionType;
@@ -53,6 +58,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 
 import me.denley.courier.Courier;
 import me.denley.courier.ReceiveMessages;
@@ -92,6 +98,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     private Transaction recoTransaction;
     HashMap<Marker, POI> markerPOIMap;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +119,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         Intent intent = getIntent();
         String city = intent.getStringExtra("city");
         if (city == null) {
-             city = "atlanta.json";
+            city = "atlanta.json";
         }
         if (intent.getStringExtra("language") != null) {
             language = intent.getStringExtra("language");
@@ -122,25 +133,31 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
         try {
             client.newCall(request).enqueue(new Callback() {
-                @Override public void onFailure(Call call, IOException e) {
+                @Override
+                public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
                 }
 
-                @Override public void onResponse(Call call, Response response) throws IOException {
-                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (!response.isSuccessful())
+                        throw new IOException("Unexpected code " + response);
                     MapsActivity.this.mapDataLoaded = true;
                     MapsActivity.this.mapData = response.body().string();
                     populateMap();
                 }
             });
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 
         }
         initTTS();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
-    @Override protected void onDestroy() {
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
         Courier.stopReceiving(this);
     }
@@ -167,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                             POI point = new POI(pois.getJSONObject(i));
                             LatLng pointPos = new LatLng(point.getLat(), point.getLng());
                             float iconColor;
-                            switch(point.getType()) {
+                            switch (point.getType()) {
                                 case "Attractions":
                                     iconColor = BitmapDescriptorFactory.HUE_BLUE;
                                     break;
@@ -184,10 +201,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                                     iconColor = BitmapDescriptorFactory.HUE_ORANGE;
                             }
                             Marker m = mMap.addMarker(new MarkerOptions().position(pointPos)
-                                .icon(BitmapDescriptorFactory.defaultMarker(iconColor)));//.title(point.getName()));
+                                    .icon(BitmapDescriptorFactory.defaultMarker(iconColor)));//.title(point.getName()));
                             markerPOIMap.put(m, point);
                         }
-                    } catch (JSONException e) {}
+                    } catch (JSONException e) {
+                    }
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.map_center);
 
                     LatLng atlanta = new LatLng(33.751032, -84.396284);
@@ -197,10 +215,10 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                     lastLocation = atlLoc;
 
 
-                    center = mMap.addMarker(new MarkerOptions().position(atlanta).icon(icon).anchor(0.5f,0.5f));
+                    center = mMap.addMarker(new MarkerOptions().position(atlanta).icon(icon).anchor(0.5f, 0.5f));
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(atlanta));
-                    mMap.animateCamera( CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f ) );
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(atlanta, 13.0f));
                 }
             });
 
@@ -238,7 +256,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         LatLng pos = mMap.getCameraPosition().target;
         center.setPosition(pos);
 
-        Location location =  new Location("");
+        Location location = new Location("");
         location.setLatitude(pos.latitude);
         location.setLongitude(pos.longitude);
         if (!overlayShown && lastLocation != null && location.distanceTo(lastLocation) > PIN_SHOW_DIST / 2) {
@@ -248,20 +266,20 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     }
 
     private void checkNearbyPOIs(Location location) {
-        Location pinLocation =  new Location("");
+        Location pinLocation = new Location("");
         float closestDist = PIN_SHOW_DIST;
         Marker closest = null;
 
         Iterator it = markerPOIMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            POI current = (POI)pair.getValue();
+            POI current = (POI) pair.getValue();
             pinLocation.setLatitude(current.getLat());
             pinLocation.setLongitude(current.getLng());
             float distance = location.distanceTo(pinLocation);
-            if (current != currentPOI && distance < PIN_SHOW_DIST){
+            if (current != currentPOI && distance < PIN_SHOW_DIST) {
                 if (distance < closestDist) {
-                    Marker pin = (Marker)pair.getKey();
+                    Marker pin = (Marker) pair.getKey();
                     closest = pin;
                     closestDist = distance;
                 }
@@ -271,7 +289,6 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             onMarkerClick(closest);
         }
     }
-
 
 
     private void sendWear(String title) {
@@ -310,7 +327,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
         currentPOI = markerPOIMap.get(marker);//Util.getPOIFromMarker(MapsActivity.this.mapData, marker);
         if (currentPOI != null) {
-            ((App)this.getApplication()).lastPOI = currentPOI;
+            ((App) this.getApplication()).lastPOI = currentPOI;
             overlayShown = true;
             FragmentManager fm = getSupportFragmentManager();
             DetailFragment dialog = new DetailFragment();
@@ -319,12 +336,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
 
             sendWear(currentPOI.getName());
-            Courier.deliverMessage(this, "/bitmap", currentPOI.getBitmap());
+
+                //Courier.deliverMessage(this, "/bitmap", currentPOI.getBitmap());
 
         }
         //speak(markerText);
-
-
 
 
         //recognize();
@@ -335,7 +351,33 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         return false;
     }
 
+    private void sendImageToWear() {
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    PutDataMapRequest request = PutDataMapRequest.create("/image");
+                    DataMap map = request.getDataMap();
+                    Asset asset = currentPOI.getBitmap();
+                    Random randomGenerator = new Random();
+                    int randomInt = randomGenerator.nextInt(1000);
+                    map.putInt("Integer", randomInt);
+                    map.putAsset("profileImage", asset);
+                    Courier.deliverData(MapsActivity.this, "/bitmap", currentPOI);
+                    //Wearable.DataApi.putDataItem(apiClient, request.asPutDataRequest());
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+        thread.start();
+
+        Log.d(TAG, "Image send");
+    }
+
     private void recognize(String textInput) {
+        final String nluContextTag = "ATTHACK";
         //Setup our Reco transaction options.
         Transaction.Options options = new Transaction.Options();
         options.setDetection(DetectionType.Short);
@@ -348,11 +390,16 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         try {
             if (textInput != null) {
                 appServerData.put("message", textInput);
+                speechSessionNLU.transactionWithService(nluContextTag, appServerData, options, recoListener);
+            } else
+            {
+                //Start listening
+                recoTransaction = speechSessionNLU.recognizeWithService(nluContextTag, appServerData, options, recoListener);
+
             }
-        } catch (Exception e) {}
-        //Start listening
-        recoTransaction = speechSessionNLU.recognizeWithService("ATTHACK", appServerData, options, recoListener);
-    }
+        } catch (Exception e) {
+        }
+       }
 
     private void speak(String ttsText) {
         //Setup our TTS transaction options.
@@ -399,9 +446,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             try {
                 speak(speakText);
 
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
+
     @Override
     public void onBeginPlaying(AudioPlayer audioPlayer, Audio audio) {
 
@@ -475,7 +524,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         }
 
         @Override
-        public void onServiceResponse(Transaction transaction, org.json.JSONObject response) {
+        public void onServiceResponse(Transaction transaction, JSONObject response) {
             try {
                 // 2 spaces for tabulations.
                 //logs.append("\nonServiceResponse: " + response.toString(2));
@@ -512,7 +561,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         @Override
         public void onSuccess(Transaction transaction, String s) {
             //logs.append("\nonSuccess");
-            Toast.makeText(MapsActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MapsActivity.this, "onSuccess", Toast.LENGTH_SHORT).show();
             //Notification of a successful transaction.
             setState(State.IDLE);
         }
@@ -550,6 +599,9 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     @Override
     public void setBitmap(Bitmap b) {
         currentPOI.setBitmap(Util.createAssetFromBitmap(b));
+        if (currentPOI.getBitmap() != null) {
+            sendImageToWear();
+        }
     }
 
     @Override
@@ -564,7 +616,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     @ReceiveMessages("/nlu")
     public void onWearNluText(String text, String nodeId) {
-       recognize(text);
+        recognize(text);
 
     }
 
@@ -572,6 +624,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     public void onSpeech() {
         recognize(null);
     }
+
 
     private enum State {
         IDLE,

@@ -39,6 +39,7 @@ import com.nuance.speechkit.Session;
 import com.nuance.speechkit.Transaction;
 import com.nuance.speechkit.TransactionException;
 
+import org.atthack.november16.data.POI;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 
@@ -90,6 +91,7 @@ public class POIActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Courier.stopReceiving(this);
         unregisterReceiver(stopAlarm);
     }
 
@@ -98,6 +100,7 @@ public class POIActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         setContentView(R.layout.poi_layout);
+        Courier.startReceiving(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
@@ -152,17 +155,17 @@ public class POIActivity extends Activity {
         Courier.deliverMessage(this, msg, data);
     }
 
-
-    @ReceiveMessages("/bitmap")
-    public void onReceiveBitmap(Asset asset, String nodeId) {
-
-        if (asset != null) {
-            Log.i(TAG, "Got bitmap");
-            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
-            Drawable drawable = new BitmapDrawable(getResources(), b);
-            frame.setBackground(drawable);
-        }
-    }
+//
+//    @ReceiveMessages("/bitmap")
+//    public void onReceiveBitmap(POI point, String nodeId) {
+//        Asset asset = point.getBitmap();
+//        if (asset != null) {
+//            Log.i(TAG, "Got bitmap");
+//            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
+//            Drawable drawable = new BitmapDrawable(getResources(), b);
+//            frame.setBackground(drawable);
+//        }
+//    }
 
     private static final int SPEECH_REQUEST_CODE = 0;
 
