@@ -58,7 +58,7 @@ public class StartActivity extends AppCompatActivity {
                     lang = "spa-MEX";
                 } else {
                     cityJSON = "atlanta.json";
-                    lang = "en-USA";
+                    lang = "eng-USA";
                 }
                 intent.putExtra("city", cityJSON);
                 intent.putExtra("lang", lang);
