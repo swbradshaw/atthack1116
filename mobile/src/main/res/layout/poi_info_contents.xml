@@ -60,16 +60,16 @@
 
                 <ImageButton
                     android:id="@+id/btn_play"
-                    android:src="@drawable/ic_play"
-                    android:background="@drawable/button_state"
+                    android:src="@drawable/play_state"
+                    android:background="@drawable/btn_state"
                     android:layout_weight="1"
                     android:layout_margin="2dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp" />
                 <ImageButton
                     android:id="@+id/btn_ask"
-                    android:src="@drawable/ic_ask"
-                    android:background="@drawable/button_state"
+                    android:src="@drawable/ask_state"
+                    android:background="@drawable/btn_state"
                     android:layout_weight="1"
                     android:layout_margin="2dp"
                     android:layout_width="50dp"
