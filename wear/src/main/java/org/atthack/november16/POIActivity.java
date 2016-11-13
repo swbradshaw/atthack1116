@@ -91,7 +91,8 @@ public class POIActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Courier.stopReceiving(this);
+        Courier.deliverMessage(this, "/dismiss", "");
+       // Courier.stopReceiving(this);
         unregisterReceiver(stopAlarm);
     }
 
@@ -100,7 +101,7 @@ public class POIActivity extends Activity {
         super.onCreate(savedInstanceState);
         Log.i(TAG, "onCreate");
         setContentView(R.layout.poi_layout);
-        Courier.startReceiving(this);
+       // Courier.startReceiving(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
@@ -156,16 +157,16 @@ public class POIActivity extends Activity {
     }
 
 //
-    @ReceiveMessages("/bitmap")
-    public void onReceiveBitmap(POI point, String nodeId) {
-        Asset asset = point.getBitmap();
-        if (asset != null) {
-            Log.i(TAG, "Got bitmap");
-            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
-            Drawable drawable = new BitmapDrawable(getResources(), b);
-            frame.setBackground(drawable);
-        }
-    }
+//    @ReceiveMessages("/bitmap")
+//    public void onReceiveBitmap(POI point, String nodeId) {
+//        Asset asset = point.getBitmap();
+//        if (asset != null) {
+//            Log.i(TAG, "Got bitmap");
+//            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
+//            Drawable drawable = new BitmapDrawable(getResources(), b);
+//            frame.setBackground(drawable);
+//        }
+//    }
 
     private static final int SPEECH_REQUEST_CODE = 0;
 

@@ -91,6 +91,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private Audio errorEarcon;
     private Transaction speechTrans;
     private String language = "eng-USA";
+    DetailFragment dialog;
 
     public static final String KEY_TITLE = "title";
     public static final float PIN_SHOW_DIST = 50; // Distance in meters that a pin will pop up automatically
@@ -315,7 +316,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         Intent mServiceIntent = new Intent(this, SendToWearService.class);
         mServiceIntent.setData(Uri.parse("/dismiss"));
         this.startService(mServiceIntent);
-
+        this.dialog = null;
 
     }
 
@@ -327,7 +328,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             ((App) this.getApplication()).lastPOI = currentPOI;
             overlayShown = true;
             FragmentManager fm = getSupportFragmentManager();
-            DetailFragment dialog = new DetailFragment();
+            dialog = new DetailFragment();
             dialog.setData(currentPOI);
             dialog.show(fm, "detail");
 
@@ -354,13 +355,13 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             @Override
             public void run() {
                 try {
-                    PutDataMapRequest request = PutDataMapRequest.create("/image");
-                    DataMap map = request.getDataMap();
-                    Asset asset = currentPOI.getBitmap();
-                    Random randomGenerator = new Random();
-                    int randomInt = randomGenerator.nextInt(1000);
-                    map.putInt("Integer", randomInt);
-                    map.putAsset("profileImage", asset);
+//                    PutDataMapRequest request = PutDataMapRequest.create("/image");
+//                    DataMap map = request.getDataMap();
+//                    Asset asset = currentPOI.getBitmap();
+//                    Random randomGenerator = new Random();
+//                    int randomInt = randomGenerator.nextInt(1000);
+//                    map.putInt("Integer", randomInt);
+//                    map.putAsset("profileImage", asset);
                     Courier.deliverData(MapsActivity.this, "/bitmap", currentPOI);
                     //Wearable.DataApi.putDataItem(apiClient, request.asPutDataRequest());
                 } catch (Exception e) {
@@ -595,10 +596,10 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     @Override
     public void setBitmap(Bitmap b) {
-        currentPOI.setBitmap(Util.createAssetFromBitmap(b));
-        if (currentPOI.getBitmap() != null) {
-            sendImageToWear();
-        }
+//        currentPOI.setBitmap(Util.createAssetFromBitmap(b));
+//        if (currentPOI.getBitmap() != null) {
+//            sendImageToWear();
+//        }
     }
 
     @Override
@@ -617,6 +618,17 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     }
 
+    @ReceiveMessages("/dismiss")
+    public void onDismiss(String text, String nodeId) {
+        //dismiss popup
+        if (this.dialog  != null) {
+            try {
+                this.dialog.dismiss();
+            } catch (Exception e) {}
+        }
+
+    }
+
     @Override
     public void onSpeech() {
         recognize(null);
@@ -627,62 +639,5 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         IDLE,
         LISTENING,
         PROCESSING
-    }
-
-    class POIInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-
-        // These are both viewgroups containing an ImageView with id "badge" and two TextViews with id
-        // "title" and "snippet".
-        private final View mWindow;
-
-        private final View mContents;
-
-        POIInfoWindowAdapter() {
-            mWindow = getLayoutInflater().inflate(R.layout.poi_info_window, null);
-            mContents = getLayoutInflater().inflate(R.layout.poi_info_contents, null);
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            POI poi = markerPOIMap.get(marker);
-            render(marker, mWindow, poi);
-            return mWindow;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            POI poi = markerPOIMap.get(marker);
-            render(marker, mContents, poi);
-            return mContents;
-        }
-
-        private void render(Marker marker, View view, POI poi) {
-            int badge;
-            badge = 0;
-            ((ImageView) view.findViewById(R.id.badge)).setImageResource(badge);
-
-
-            String title = marker.getTitle();
-            TextView titleUi = ((TextView) view.findViewById(R.id.title));
-            if (title != null) {
-                // Spannable string allows us to edit the formatting of the text.
-                SpannableString titleText = new SpannableString(title);
-                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
-                titleUi.setText(titleText);
-            } else {
-                titleUi.setText("");
-            }
-
-            String snippet = poi.getDescription();
-            TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
-            if (snippet != null && snippet.length() > 12) {
-                SpannableString snippetText = new SpannableString(snippet);
-                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
-                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
-                snippetUi.setText(snippetText);
-            } else {
-                snippetUi.setText("");
-            }
-        }
     }
 }
