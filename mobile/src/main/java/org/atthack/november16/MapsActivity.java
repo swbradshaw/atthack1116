@@ -151,9 +151,6 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
         }
         initTTS();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client2 = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
