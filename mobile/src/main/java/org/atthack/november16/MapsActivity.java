@@ -463,6 +463,17 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             // what are the hours
             speakText = currentPOI.getHours();
 
+        } else if (intent.toString().contains("Count") || intent.toString().contains("nuance_CARDINAL_NUMBER")) {
+            try {
+                JSONObject concepts = intent.getJSONArray("interpretations").getJSONObject(0).getJSONObject("concepts");
+                String type = concepts.getJSONArray("type").getJSONObject(0).getString("value");
+                int iDis3 = concepts.getJSONArray("nuance_CARDINAL_NUMBER").getJSONObject(0).getInt("value");
+                //int iDis = Integer.getInteger(dis);
+                this.sayDistanceCount(type, iDis3);
+                
+
+
+            } catch (JSONException e) {}
         }
 
         if (speakText != null) {
