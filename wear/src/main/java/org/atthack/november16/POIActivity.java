@@ -156,16 +156,16 @@ public class POIActivity extends Activity {
     }
 
 //
-//    @ReceiveMessages("/bitmap")
-//    public void onReceiveBitmap(POI point, String nodeId) {
-//        Asset asset = point.getBitmap();
-//        if (asset != null) {
-//            Log.i(TAG, "Got bitmap");
-//            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
-//            Drawable drawable = new BitmapDrawable(getResources(), b);
-//            frame.setBackground(drawable);
-//        }
-//    }
+    @ReceiveMessages("/bitmap")
+    public void onReceiveBitmap(POI point, String nodeId) {
+        Asset asset = point.getBitmap();
+        if (asset != null) {
+            Log.i(TAG, "Got bitmap");
+            Bitmap b = BitmapFactory.decodeByteArray(asset.getData(), 0, asset.getData().length);
+            Drawable drawable = new BitmapDrawable(getResources(), b);
+            frame.setBackground(drawable);
+        }
+    }
 
     private static final int SPEECH_REQUEST_CODE = 0;
 
