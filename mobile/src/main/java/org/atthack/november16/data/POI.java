@@ -126,17 +126,36 @@ public class POI {
     public void fromJSON(JSONObject json) {
         try {
 
-            name = json.getString("name");
-            lat = json.getDouble("lat");
-            lng = json.getDouble("lng");
-            description = json.getString("description");
-            imageURL = json.getString("imageURL");
-            audio = json.getString("audio");
-            cost = json.getString("cost");
-            hours = json.getString("hours");
-            url = json.getString("url");
-            type = json.getString("type");
-
+            if (json.has("name")) {
+                name = json.getString("name");
+            }
+            if (json.has("lat")) {
+                lat = json.getDouble("lat");
+            }
+            if (json.has("lng")) {
+                lng = json.getDouble("lng");
+            }
+            if (json.has("description")) {
+                description = json.getString("description");
+            }
+            if (json.has("imageURL")) {
+                imageURL = json.getString("imageURL");
+            }
+            if (json.has("audio")) {
+                audio = json.getString("audio");
+            }
+            if (json.has("cost")) {
+                cost = json.getString("cost");
+            }
+            if (json.has("hours")) {
+                hours = json.getString("hours");
+            }
+            if (json.has("url")) {
+                url = json.getString("url");
+            }
+            if (json.has("type")) {
+                type = json.getString("type");
+            }
 
         } catch (JSONException e) {
 
