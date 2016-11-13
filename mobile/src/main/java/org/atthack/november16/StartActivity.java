@@ -1,6 +1,7 @@
 package org.atthack.november16;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,11 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+        TextView tvTitle = (TextView)findViewById(R.id.tvTitle);
+        Typeface mFont = Typeface.createFromAsset(getAssets(), "font.ttf");
+        tvTitle.setTypeface(mFont);
+
         setupSpinners();
     }
 

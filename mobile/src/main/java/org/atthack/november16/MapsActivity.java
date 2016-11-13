@@ -83,6 +83,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     Marker center;
     POI currentPOI = null;
     Location lastLocation;
+    LatLng lastLatLng;
 
     private Session speechSession;
     private Session speechSessionNLU;
@@ -254,6 +255,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     public void onCameraMove() {
         LatLng pos = mMap.getCameraPosition().target;
         center.setPosition(pos);
+        lastLatLng = pos;
 
         Location location = new Location("");
         location.setLatitude(pos.latitude);
@@ -429,6 +431,16 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             }
         });
 
+    }
+
+    private void sayDistanceCount(String type, int iDistance) {
+        try {
+            JSONObject obj = new JSONObject(MapsActivity.this.mapData);
+            int count = Util.getCount(obj, iDistance, type, this.lastLatLng);
+
+            String saySpeech = "There are " + count + " " + type + " in the area.";
+            this.speak(saySpeech);
+        } catch (Exception ex) { }
     }
 
     private void interpretSpeech(JSONObject intent) {
