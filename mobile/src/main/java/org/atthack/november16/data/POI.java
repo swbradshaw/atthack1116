@@ -5,10 +5,13 @@ import com.google.android.gms.wearable.Asset;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import me.denley.courier.Deliverable;
+
 /**
  * Created by jwalters on 11/12/2016.
  */
 
+@Deliverable
 public class POI {
 
     String name;
