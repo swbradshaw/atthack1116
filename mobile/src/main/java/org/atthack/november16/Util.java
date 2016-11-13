@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.wearable.Asset;
+import com.google.maps.android.SphericalUtil;
 
 import org.atthack.november16.data.POI;
 import org.json.JSONArray;
@@ -28,10 +29,11 @@ public class Util {
             JSONArray pois = points.getJSONArray("poi");
             for (int i = 0; i < pois.length(); ++i) {
 
-                LatLng pointPos = new LatLng(pois.getJSONObject(i).getDouble("lat"), pois.getJSONObject(i).getDouble("lat"));
+                LatLng pointPos = new LatLng(pois.getJSONObject(i).getDouble("lat"), pois.getJSONObject(i).getDouble("lng"));
                 String sType = pois.getJSONObject(i).getString("type");
                if (sType.equalsIgnoreCase(type)) {
-                   if (CalculationByDistance(currentPos, pointPos) < Distance) {
+                   //if (CalculationByDistance(currentPos, pointPos) < Distance) {
+                   if (SphericalUtil.computeDistanceBetween(currentPos, pointPos) < Distance) {
                        count++;
                    }
                }
