@@ -1,5 +1,8 @@
 package org.atthack.november16;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +26,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.nuance.speechkit.Audio;
@@ -45,6 +49,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import me.denley.courier.Courier;
+import me.denley.courier.ReceiveMessages;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Headers;
@@ -63,10 +69,14 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     POI currentPOI = null;
 
     private Session speechSession;
+    private Session speechSessionNLU;
     private Transaction ttsTransaction;
     private Audio startEarcon;
     private Audio stopEarcon;
     private Audio errorEarcon;
+
+    public static final String KEY_TITLE = "title";
+
 
     private Transaction recoTransaction;
     HashMap<Marker, POI> markerPOIMap;
@@ -75,6 +85,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     protected void onCreate(Bundle savedInstanceState) {
         String city = "Atlanta";
         super.onCreate(savedInstanceState);
+        Courier.startReceiving(this);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -110,10 +121,16 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         initTTS();
     }
 
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        Courier.stopReceiving(this);
+    }
+
     private void initTTS() {
         //Create a session
         speechSession = Session.Factory.session(this, Configuration.SERVER_URI_TTS, Configuration.APP_KEY_TTS);
         speechSession.getAudioPlayer().setListener(this);
+        speechSessionNLU = Session.Factory.session(this, Configuration.SERVER_URI, Configuration.APP_KEY);
     }
 
     public void populateMap() {
@@ -167,6 +184,8 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         populateMap();
         mMap.setOnCameraMoveListener(this);
         mMap.setOnMarkerClickListener(this);
+        MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(this, R.raw.mapstyle_retro);
+        mMap.setMapStyle(style);
 
 
     }
@@ -179,19 +198,43 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     }
 
 
+    private void sendWear(String title) {
+        Intent mServiceIntent = new Intent(this, SendToWearService.class);
+        mServiceIntent.setData(Uri.parse("/poi"));
+        mServiceIntent.putExtra(KEY_TITLE, title);
+        this.startService(mServiceIntent);
+    }
+
+
+    @Override
+    public void onDismiss() {
+        //Fragment dialog had been dismissed
+        if (ttsTransaction != null) {
+            try {
+                ttsTransaction.cancel();
+            } catch (Exception e) {}
+        }
+        Intent mServiceIntent = new Intent(this, SendToWearService.class);
+        mServiceIntent.setData(Uri.parse("/dismiss"));
+        this.startService(mServiceIntent);
+
+
+    }
 
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        String markerText = marker.getTitle();
         currentPOI = markerPOIMap.get(marker);//Util.getPOIFromMarker(MapsActivity.this.mapData, marker);
+        if (currentPOI != null) {
+            ((App)this.getApplication()).lastPOI = currentPOI;
+            FragmentManager fm = getSupportFragmentManager();
+            DetailFragment dialog = new DetailFragment();
+            dialog.setData(currentPOI);
+            dialog.show(fm, "detail");
 
-        FragmentManager fm = getSupportFragmentManager();
-        DetailFragment dialog = new DetailFragment();
-        dialog.setData(currentPOI);
-        dialog.show(fm, "detail");
+            sendWear(currentPOI.getName());
 
-
+        }
         //speak(markerText);
 
 
@@ -215,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         //Add properties to appServerData for use with custom service. Leave empty for use with NLU.
         JSONObject appServerData = new JSONObject();
         //Start listening
-        recoTransaction = speechSession.recognizeWithService("ATTHACK", appServerData, options, recoListener);
+        recoTransaction = speechSessionNLU.recognizeWithService("ATTHACK", appServerData, options, recoListener);
     }
 
     private void speak(String ttsText) {
@@ -250,7 +293,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             // how much does it cost
             speakText = currentPOI.getCost();
 
-        } else if (intent.toString().contains("HOURS")) {
+        } else if (intent.toString().contains("Hours")) {
             // what are the hours
             speakText = currentPOI.getHours();
 
@@ -411,6 +454,17 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     @Override
     public void onPlay() {
         speak(this.currentPOI.getAudio());
+    }
+
+    @ReceiveMessages("/play")
+    public void onWearPlay(String smsMessage, String nodeId) {
+        speak(this.currentPOI.getAudio());
+    }
+
+    @ReceiveMessages("/nlu")
+    public void onWearNluText(String text, String nodeId) {
+        Toast.makeText(MapsActivity.this, text, Toast.LENGTH_SHORT).show();
+
     }
 
     @Override

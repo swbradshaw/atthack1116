@@ -16,6 +16,27 @@ public class POI {
     String imageURL;
     String audio;
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    String type;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    String url;
+
+
     public String getHours() {
         return hours;
     }
@@ -99,6 +120,11 @@ public class POI {
             description = json.getString("description");
             imageURL = json.getString("imageURL");
             audio = json.getString("audio");
+            cost = json.getString("cost");
+            hours = json.getString("hours");
+            url = json.getString("url");
+            type = json.getString("type");
+
 
         } catch (JSONException e) {
 

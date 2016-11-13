@@ -25,6 +25,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:9.8.0'
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.nuance:speechkit:2.2.+@aar'
+    compile 'me.denley.courier:courier:1.2.1'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
     compile 'com.android.support:support-v4:25.0.0'
     testCompile 'junit:junit:4.12'

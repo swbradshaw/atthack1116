@@ -1,6 +1,7 @@
 package org.atthack.november16.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -35,8 +36,14 @@ public class DetailFragment extends DialogFragment {
         // TODO: Update argument type and name
         void onPlay();
         void onSpeech();
+        void onDismiss();
     }
 
+    @Override
+    public void onDismiss(final DialogInterface dialog) {
+        super.onDismiss(dialog);
+       mListener.onDismiss();
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

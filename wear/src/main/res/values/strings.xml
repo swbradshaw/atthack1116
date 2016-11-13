@@ -1,4 +1,6 @@
 <resources>
-    <string name="app_name">November16</string>
+    <string name="app_name">Mixpedition</string>
     <string name="intro_text">Long click to exit the map.</string>
+    <string name="play">Play</string>
+    <string name="ask">Ask Question</string>
 </resources>

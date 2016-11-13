@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">November16</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="app_name">Mixpedition</string>
+    <string name="title_activity_maps">Mixpedition</string>
     <string name="btn_play">Play</string>
     <string name="btn_ask">Ask</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
