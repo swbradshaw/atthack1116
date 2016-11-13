@@ -455,6 +455,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     private void interpretSpeech(JSONObject intent) {
 
+        Log.i(TAG, intent.toString());
         String speakText = null;
         if (intent.toString().contains("COST")) {
             // how much does it cost
