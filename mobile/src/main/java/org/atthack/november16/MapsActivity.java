@@ -2,6 +2,7 @@ package org.atthack.november16;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -48,6 +49,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import me.denley.courier.Courier;
 import me.denley.courier.ReceiveMessages;
@@ -64,9 +67,11 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private GoogleMap mMap;
     boolean mapDataLoaded = false;
     boolean mapReady = false;
+    boolean overlayShown = false;
     String mapData = null;
     Marker center;
     POI currentPOI = null;
+    Location lastLocation;
 
     private Session speechSession;
     private Session speechSessionNLU;
@@ -76,6 +81,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
     private Audio errorEarcon;
 
     public static final String KEY_TITLE = "title";
+    public static final float PIN_SHOW_DIST = 50; // Distance in meters that a pin will pop up automatically
 
 
     private Transaction recoTransaction;
@@ -147,13 +153,36 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                             //JSONObject point = pois.getJSONObject(i);
                             POI point = new POI(pois.getJSONObject(i));
                             LatLng pointPos = new LatLng(point.getLat(), point.getLng());
-                            Marker m = mMap.addMarker(new MarkerOptions().position(pointPos));//.title(point.getName()));
+                            float iconColor;
+                            switch(point.getType()) {
+                                case "Attractions":
+                                    iconColor = BitmapDescriptorFactory.HUE_BLUE;
+                                    break;
+                                case "Sports":
+                                    iconColor = BitmapDescriptorFactory.HUE_RED;
+                                    break;
+                                case "Parks":
+                                    iconColor = BitmapDescriptorFactory.HUE_GREEN;
+                                    break;
+                                case "Quirky":
+                                    iconColor = BitmapDescriptorFactory.HUE_MAGENTA;
+                                    break;
+                                default:
+                                    iconColor = BitmapDescriptorFactory.HUE_ORANGE;
+                            }
+                            Marker m = mMap.addMarker(new MarkerOptions().position(pointPos)
+                                .icon(BitmapDescriptorFactory.defaultMarker(iconColor)));//.title(point.getName()));
                             markerPOIMap.put(m, point);
                         }
                     } catch (JSONException e) {}
                     BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.map_center);
 
                     LatLng atlanta = new LatLng(33.751032, -84.396284);
+                    Location atlLoc = new Location("");
+                    atlLoc.setLatitude(atlanta.latitude);
+                    atlLoc.setLongitude(atlanta.longitude);
+                    lastLocation = atlLoc;
+
 
                     center = mMap.addMarker(new MarkerOptions().position(atlanta).icon(icon).anchor(0.5f,0.5f));
 
@@ -193,9 +222,43 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
 
     @Override
     public void onCameraMove() {
-        center.setPosition(mMap.getCameraPosition().target);
+        LatLng pos = mMap.getCameraPosition().target;
+        center.setPosition(pos);
 
+        Location location =  new Location("");
+        location.setLatitude(pos.latitude);
+        location.setLongitude(pos.longitude);
+        if (!overlayShown && lastLocation != null && location.distanceTo(lastLocation) > PIN_SHOW_DIST / 2) {
+            checkNearbyPOIs(location);
+            lastLocation = location;
+        }
     }
+
+    private void checkNearbyPOIs(Location location) {
+        Location pinLocation =  new Location("");
+        float closestDist = PIN_SHOW_DIST;
+        Marker closest = null;
+
+        Iterator it = markerPOIMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            POI current = (POI)pair.getValue();
+            pinLocation.setLatitude(current.getLat());
+            pinLocation.setLongitude(current.getLng());
+            float distance = location.distanceTo(pinLocation);
+            if (current != currentPOI && distance < PIN_SHOW_DIST){
+                if (distance < closestDist) {
+                    Marker pin = (Marker)pair.getKey();
+                    closest = pin;
+                    closestDist = distance;
+                }
+            }
+        }
+        if (closest != null) {
+            onMarkerClick(closest);
+        }
+    }
+
 
 
     private void sendWear(String title) {
@@ -214,6 +277,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                 ttsTransaction.cancel();
             } catch (Exception e) {}
         }
+        overlayShown = false;
         Intent mServiceIntent = new Intent(this, SendToWearService.class);
         mServiceIntent.setData(Uri.parse("/dismiss"));
         this.startService(mServiceIntent);
@@ -227,6 +291,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         currentPOI = markerPOIMap.get(marker);//Util.getPOIFromMarker(MapsActivity.this.mapData, marker);
         if (currentPOI != null) {
             ((App)this.getApplication()).lastPOI = currentPOI;
+            overlayShown = true;
             FragmentManager fm = getSupportFragmentManager();
             DetailFragment dialog = new DetailFragment();
             dialog.setData(currentPOI);
@@ -284,6 +349,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
                 ttsTransaction = null;
             }
         });
+
     }
 
     private void interpretSpeech(JSONObject intent) {
