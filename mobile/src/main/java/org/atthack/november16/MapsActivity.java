@@ -124,6 +124,7 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
             @Override
             public void onClick(View view) {
                 recognize(null);
+                //sayDistanceCount("Parks", 1000);
             }
         });
 
