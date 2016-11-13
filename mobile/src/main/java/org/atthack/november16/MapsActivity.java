@@ -7,6 +7,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -117,6 +118,14 @@ public class MapsActivity extends FragmentActivity implements DetailFragment.OnF
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recognize(null);
+            }
+        });
 
         loadEarcons();
         Intent intent = getIntent();
