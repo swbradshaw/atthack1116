@@ -2,9 +2,14 @@ package org.atthack.november16.fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
@@ -13,11 +18,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.atthack.november16.R;
 import org.atthack.november16.data.POI;
 import org.json.JSONObject;
+
+import java.io.InputStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,7 +36,7 @@ import org.json.JSONObject;
  * Use the {@link DetailFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DetailFragment extends DialogFragment {
+public class DetailFragment extends BottomSheetDialogFragment{
 
     private OnFragmentInteractionListener mListener;
     POI point;
@@ -79,6 +88,10 @@ public class DetailFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.poi_info_contents, container);
         try {
+
+            new DownloadImageTask((ImageView) view.findViewById(R.id.badge))
+                    .execute(point.getImageURL());
+
             String title = point.getName();
             getDialog().setTitle(title);
 
@@ -86,24 +99,30 @@ public class DetailFragment extends DialogFragment {
             if (title != null) {
                 // Spannable string allows us to edit the formatting of the text.
                 SpannableString titleText = new SpannableString(title);
-                titleText.setSpan(new ForegroundColorSpan(Color.RED), 0, titleText.length(), 0);
+                titleText.setSpan(new ForegroundColorSpan(Color.WHITE), 0, titleText.length(), 0);
                 titleUi.setText(titleText);
             } else {
                 titleUi.setText("");
             }
 
             String snippet = point.getDescription();
+            String detail = point.getAudio();
             TextView snippetUi = ((TextView) view.findViewById(R.id.snippet));
-            if (snippet != null && snippet.length() > 12) {
-                SpannableString snippetText = new SpannableString(snippet);
-                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
-                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
-                snippetUi.setText(snippetText);
-            } else {
-                snippetUi.setText("");
-            }
+            snippetUi.setText(snippet);
 
-            Button playButton = (Button)view.findViewById(R.id.btn_play);
+            TextView detailUi = ((TextView) view.findViewById(R.id.detail));
+            detailUi.setText(detail);
+
+//            if (snippet != null && snippet.length() > 12) {
+//                SpannableString snippetText = new SpannableString(snippet);
+//                snippetText.setSpan(new ForegroundColorSpan(Color.MAGENTA), 0, 10, 0);
+//                snippetText.setSpan(new ForegroundColorSpan(Color.BLUE), 12, snippet.length(), 0);
+//                snippetUi.setText(snippetText);
+//            } else {
+//                snippetUi.setText("");
+//            }
+
+            ImageButton playButton = (ImageButton)view.findViewById(R.id.btn_play);
             playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -111,7 +130,7 @@ public class DetailFragment extends DialogFragment {
                 }
             });
 
-            Button speakButton = (Button)view.findViewById(R.id.btn_ask);
+            ImageButton speakButton = (ImageButton)view.findViewById(R.id.btn_ask);
             speakButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -128,4 +147,28 @@ public class DetailFragment extends DialogFragment {
         return view;
     }
 
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
 }
