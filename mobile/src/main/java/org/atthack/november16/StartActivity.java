@@ -25,7 +25,7 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private void setupSpinners() {
-        Spinner language = (Spinner) findViewById(R.id.ddLanguage);
+        final Spinner language = (Spinner) findViewById(R.id.ddLanguage);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.language, R.layout.spinner_center);
@@ -35,7 +35,7 @@ public class StartActivity extends AppCompatActivity {
 // Apply the adapter to the spinner
         language.setAdapter(adapter);
 
-        Spinner city = (Spinner) findViewById(R.id.ddCity);
+        final Spinner city = (Spinner) findViewById(R.id.ddCity);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapterCity = ArrayAdapter.createFromResource(this,
                 R.array.city, R.layout.spinner_center);
@@ -51,8 +51,17 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(StartActivity.this, MapsActivity.class);
-                intent.putExtra("city", "atlanta.json");
-                intent.putExtra("lang", "eng-USA");
+                String cityJSON;
+                String lang;
+                if (city.getSelectedItemId() == 1) {
+                    cityJSON = "madison-es.json";
+                    lang = "spa-MEX";
+                } else {
+                    cityJSON = "atlanta.json";
+                    lang = "en-USA";
+                }
+                intent.putExtra("city", cityJSON);
+                intent.putExtra("lang", lang);
                 startActivity(intent);
 
 

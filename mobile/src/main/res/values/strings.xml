@@ -15,18 +15,21 @@
 
     <string-array name="languageValue">
         <item>eng-USA</item>
-        <item>eng-USA</item>
+        <item>sp-MEX</item>
     </string-array>
 
 
 
     <string-array name="city">
         <item>Atlanta</item>
+        <item>Madison</item>
         <item>New York</item>
+        <item>Paris</item>
+        <item>San Francisco</item>
     </string-array>
 
     <string-array name="cityValue">
         <item>atlanta.json</item>
-        <item>newyork-es.json</item>
+        <item>madison-es.json</item>
     </string-array>
 </resources>
